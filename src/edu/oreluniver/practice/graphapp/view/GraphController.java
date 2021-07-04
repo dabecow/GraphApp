@@ -100,11 +100,9 @@ public class GraphController {
   @FXML
   private void initialize(){
     ChartPanManager panner = new ChartPanManager(lineChart);
-    //while pressing the left mouse button, you can drag to navigate
     panner.setMouseFilter(mouseEvent -> {
       updateAxisGrid();
-      if (mouseEvent.getButton() == MouseButton.PRIMARY && mainController.getCurrentDot() == null) {//set your custom combination to trigger navigation
-        // let it through
+      if (mouseEvent.getButton() == MouseButton.PRIMARY && mainController.getCurrentDot() == null) {
       } else {
         mouseEvent.consume();
       }
@@ -113,7 +111,7 @@ public class GraphController {
 
     JFXChartUtil.setupZooming(lineChart, mouseEvent -> {
       updateAxisGrid();
-      if (mouseEvent.getButton() != MouseButton.SECONDARY)//set your custom combination to trigger rectangle zooming
+      if (mouseEvent.getButton() != MouseButton.SECONDARY)
         mouseEvent.consume();
     });
 
@@ -218,7 +216,8 @@ public class GraphController {
       return;
     }
 
-    this.currentDotLabel.setText("(" + String.format("%,.2f", dot.getPosX()) + ", " + String.format("%,.2f", dot.getPosY()) + ")");
+    this.currentDotLabel.setText("(" + String.format("%,.2f",
+            dot.getPosX()) + ", " + String.format("%,.2f", dot.getPosY()) + ")");
 
   }
 
