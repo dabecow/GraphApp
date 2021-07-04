@@ -7,7 +7,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox alignment="BOTTOM_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="-Infinity" prefHeight="373.0" prefWidth="210.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.TableController">
+<VBox alignment="BOTTOM_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="-Infinity" prefHeight="373.0" prefWidth="210.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.oreluniver.practice.graphapp.view.TableController">
    <children>
       <TableView fx:id="tableView" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onMouseClicked="#changeCurrentDot" prefHeight="358.0" prefWidth="210.0" VBox.vgrow="ALWAYS">
          <columns>
@@ -25,6 +25,5 @@
          </children>
       </HBox>
       <Button fx:id="addDotButton" maxHeight="-Infinity" maxWidth="-Infinity" mnemonicParsing="false" onAction="#addEnteredDot" prefHeight="25.0" prefWidth="219.0" text="Add dot" VBox.vgrow="NEVER" />
-      <Button fx:id="updateTableButton" maxHeight="-Infinity" maxWidth="-Infinity" mnemonicParsing="false" onAction="#updateTable" prefHeight="25.0" prefWidth="219.0" text="Update Table" />
    </children>
 </VBox>

@@ -1,14 +1,16 @@
-package sample;
+package edu.oreluniver.practice.graphapp.view;
+
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.function.UnaryOperator;
 import java.util.regex.Pattern;
+
+import edu.oreluniver.practice.graphapp.model.Dot;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -16,17 +18,17 @@ import javafx.scene.control.TextFormatter;
 import javafx.scene.control.TextFormatter.Change;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
-import javafx.util.Callback;
-import javafx.util.converter.DoubleStringConverter;
+import javafx.util.StringConverter;
+
 
 public class TableController {
 
   public List<Dot> dots = new ArrayList<>();
 
-  private Controller controller;
+  private MainController mainController;
 
-  public void setController(Controller controller) {
-    this.controller = controller;
+  public void setController(MainController mainController) {
+    this.mainController = mainController;
   }
 
   @FXML
@@ -50,76 +52,86 @@ public class TableController {
   @FXML
   private Button updateTableButton;
 
-  private Dot currentDot;
-
-  public Dot getCurrentDot() {
-    return currentDot;
-  }
-
   @FXML
   private void initialize(){
-
-
-    Callback<TableColumn<Dot, Double>, TableCell<Dot, Double>> testFactory
-        = TextFieldTableCell.forTableColumn(new DoubleStringConverter());
 
     columnX.setCellValueFactory(new PropertyValueFactory<>("x"));
     columnY.setCellValueFactory(new PropertyValueFactory<>("y"));
 
-    columnX.setCellFactory(TextFieldTableCell.forTableColumn(new DoubleStringConverter()));
 
-    columnY.setCellFactory(TextFieldTableCell.forTableColumn(new DoubleStringConverter()));
+    setCellFactory(columnX);
+
+    setCellFactory(columnY);
 
     columnX.setOnEditCommit(event -> {
       Dot oldDot = event.getRowValue();
       Dot newDot = new Dot(event.getNewValue(), oldDot.getY());
-      updateDot(oldDot, newDot, dots);
+      updateDot(mainController.getCurrentDot(), newDot, dots);
     });
 
     columnY.setOnEditCommit(event -> {
       Dot oldDot = event.getRowValue();
       Dot newDot = new Dot(oldDot.getX(), event.getNewValue());
-      updateDot(oldDot, newDot, dots);
+      updateDot(mainController.getCurrentDot(), newDot, dots);
     });
 
+    setPattern(xDotTextField, yDotTextField);
+
+  }
+
+  static void setPattern(TextField xDotTextField, TextField yDotTextField) {
     Pattern pattern = Pattern.compile("-?\\d*|\\d+\\.\\d*");
 
-    UnaryOperator<Change> change = new UnaryOperator<Change>() {
-      @Override
-      public Change apply(Change change) {
-        return pattern.matcher(change.getControlNewText()).matches() ? change : null;
-      }
-    };
+    UnaryOperator<Change> change = change1 -> pattern.matcher(change1.getControlNewText()).matches() ? change1 : null;
 
     xDotTextField.setTextFormatter(new TextFormatter<>(change));
     yDotTextField.setTextFormatter(new TextFormatter<>(change));
+  }
 
+  private void setCellFactory(TableColumn<Dot, Double> column) {
+    column.setCellFactory(TextFieldTableCell.forTableColumn(new StringConverter<Double>() {
+
+      @Override public String toString(final Double value) {
+        return String.format("%.5f", value);
+      }
+
+      @Override
+      public Double fromString(String string) {
+        string = string.replaceAll(",", ".");
+        return Double.parseDouble(string);
+      }
+
+    }));
   }
 
   private void updateDot(Dot oldDot, Dot newDot, List<Dot> dots){
     dots.set(dots.indexOf(oldDot), newDot);
     updateTable();
+    mainController.getGraphController().updateGraph();
+    mainController.resetCurrentDot();
   }
 
   @FXML
-  private void updateTable(){
+  public void updateTable(){
+
     dots.sort(Comparator.comparing(Dot::getX));
 
     tableView.getItems().removeAll();
     tableView.setItems(FXCollections.observableArrayList(dots));
-//    FXCollections.copy(tableView.getItems(), dots);
-//    for (Dot dot: dots) {
-//      tableView.getItems().add(dot);
-//    }
+    tableView.getColumns().get(0).setVisible(false);
+    tableView.getColumns().get(0).setVisible(true);
 
-    controller.getGraphController().updateGraph();
+  }
+
+  public TableView<Dot> getTableView() {
+    return tableView;
   }
 
   @FXML
   private void addEnteredDot(){
 
-    if (controller.isFieldEmpty(xDotTextField) || controller.isFieldEmpty(yDotTextField)){
-      controller.markWrongFields(xDotTextField, yDotTextField);
+    if (mainController.isFieldEmpty(xDotTextField) || mainController.isFieldEmpty(yDotTextField)){
+      mainController.markWrongFields(xDotTextField, yDotTextField);
       return;
     }
 
@@ -131,10 +143,13 @@ public class TableController {
 
     dots.add(new Dot(xValue, yValue));
     dots.sort(Comparator.comparing(Dot::getX));
+
     updateTable();
+    mainController.getGraphController().updateGraph();
+    mainController.unmarkFields(xDotTextField, yDotTextField);
   }
 
-  private void debugDots(){
+  public void debugDots(){
     System.out.println("debug:");
 
     for (Dot dot: dots
@@ -146,24 +161,16 @@ public class TableController {
   @FXML
   private void onEnter(){
 
-    if (!controller.isFieldEmpty(xDotTextField) && !controller.isFieldEmpty(yDotTextField))
+    if (!mainController.isFieldEmpty(xDotTextField) && !mainController.isFieldEmpty(yDotTextField))
       addEnteredDot();
 
-//    debugDots();
   }
 
   @FXML
   private void changeCurrentDot(){
-    currentDot = tableView.getSelectionModel().getSelectedItem();
-    controller.getGraphController().updateCurrentDotLabel(currentDot);
+    mainController.setCurrentDot(tableView.getSelectionModel().getSelectedItem());
+    mainController.getGraphController().updateCurrentDotLabel();
   }
 
-  public void deleteFromDots(Dot dot){
-    dots.remove(dot);
-    updateTable();
-  }
 
-  public void deleteCurrentDot(){
-    deleteFromDots(currentDot);
-  }
 }

@@ -1,4 +1,4 @@
-package sample;
+package edu.oreluniver.practice.graphapp;
 
 import java.util.Objects;
 import javafx.application.Application;
@@ -11,7 +11,7 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception{
-        Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("Sample.fxml")));
+        Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("view/Main.fxml")));
 
         primaryStage.setTitle("Hello World");
         primaryStage.setScene(new Scene(root));

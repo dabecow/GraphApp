@@ -1,4 +1,4 @@
-package sample;
+package edu.oreluniver.practice.graphapp.model;
 
 public class Dot {
 
