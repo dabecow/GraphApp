@@ -68,8 +68,8 @@ public class GraphController {
   private final double boundsDistractionToDisableGrid = 130;
   private final double defaultLowerBound = -10;
   private final double defaultUpperBound = 10;
+  private final double zoomingVelocity = 5;
 
-  private double zoomingVelocity = 5;
   private double leftBound;
   private double rightBound;
 
@@ -79,10 +79,22 @@ public class GraphController {
 
   @FXML
   private void updateAxisGrid(){
-    lineChart.setHorizontalGridLinesVisible(
-            !((xNumberAxis.getUpperBound() - xNumberAxis.getLowerBound()) > boundsDistractionToDisableGrid));
-    lineChart.setVerticalGridLinesVisible(
-            !((yNumberAxis.getUpperBound() - yNumberAxis.getLowerBound()) > boundsDistractionToDisableGrid));
+    if (xNumberAxis.getUpperBound() - xNumberAxis.getLowerBound() > boundsDistractionToDisableGrid){
+      lineChart.setHorizontalGridLinesVisible(false);
+      xNumberAxis.setTickMarkVisible(false);
+    } else {
+      lineChart.setHorizontalGridLinesVisible(true);
+      xNumberAxis.setTickMarkVisible(true);
+    }
+
+    if (yNumberAxis.getUpperBound() - yNumberAxis.getLowerBound() > boundsDistractionToDisableGrid){
+      lineChart.setVerticalGridLinesVisible(false);
+      yNumberAxis.setTickMarkVisible(false);
+    } else {
+      lineChart.setVerticalGridLinesVisible(true);
+      yNumberAxis.setTickMarkVisible(true);
+    }
+
   }
 
   @FXML
@@ -98,8 +110,6 @@ public class GraphController {
       }
     });
     panner.start();
-
-
 
     JFXChartUtil.setupZooming(lineChart, mouseEvent -> {
       updateAxisGrid();
@@ -119,8 +129,46 @@ public class GraphController {
   }
 
 
-  private void updateSeries(){
+  private void updateChartOnClickListener(Node node){
+    node.setOnMouseClicked(event -> {
 
+      Dot chosenDot = (Dot) node.getUserData();
+
+      lineChart.setAnimated(false);
+
+      mainController.setCurrentDot(chosenDot);
+
+      updateCurrentDotLabel();
+    });
+  }
+
+  private void updateChartOnDraggedListener(Node node, Data<Double, Double> data){
+    node.setOnMouseDragged(e -> {
+
+      Dot chosenDot = (Dot) node.getUserData();
+
+      lineChart.setAnimated(false);
+
+      mainController.setCurrentDot(chosenDot);
+
+      updateCurrentDotLabel();
+
+      Point2D pointInScene = new Point2D(e.getSceneX(), e.getSceneY());
+      double xAxisLoc = xNumberAxis.sceneToLocal(pointInScene).getX();
+      double yAxisLoc = yNumberAxis.sceneToLocal(pointInScene).getY();
+      Double x = (Double) xNumberAxis.getValueForDisplay(xAxisLoc);
+      Double y = (Double) yNumberAxis.getValueForDisplay(yAxisLoc);
+
+      mainController.getCurrentDot().setPosX(x);
+      mainController.getCurrentDot().setPosY(y);
+
+      updateCurrentDotLabel();
+      mainController.getTableController().updateTable();
+//        controller.getTableController().debugDots();
+      data.setXValue(x);
+      data.setYValue(y);
+
+    });
   }
 
   public void updateGraph(){
@@ -138,9 +186,11 @@ public class GraphController {
 
     for (Dot dot: dots) {
 
-      if (dot.getX() >= leftBound && dot.getX() <= rightBound)
-        series.getData().add(new Data<>(dot.getX(), dot.getY()));
+      if (dot.getPosX() >= leftBound && dot.getPosX() <= rightBound) {
+        Data<Double, Double> data = new Data<>(dot.getPosX(), dot.getPosY(), dot);
 
+        series.getData().add(data);
+      }
     }
 
     lineChart.getData().add(series);
@@ -149,52 +199,13 @@ public class GraphController {
 
       Node node = data.getNode();
 
+      node.setUserData(data.getExtraValue());
+
       node.setCursor(Cursor.HAND);
 
-      node.setOnMouseClicked(event -> {
-                Dot chosenDot = dots.stream().filter(dot ->
-                        dot.getX() == data.getXValue()
-                                && dot.getY() == data.getYValue()
-                ).findFirst().orElse(null);
+      updateChartOnClickListener(node);
 
-
-                lineChart.setAnimated(false);
-
-                mainController.setCurrentDot(chosenDot);
-
-                updateCurrentDotLabel();
-              });
-
-      node.setOnMouseDragged(e -> {
-        Dot chosenDot = dots.stream().filter(dot ->
-                dot.getX() == data.getXValue()
-                        && dot.getY() == data.getYValue()
-        ).findFirst().orElse(null);
-
-        lineChart.setAnimated(false);
-
-        mainController.setCurrentDot(chosenDot);
-
-        updateCurrentDotLabel();
-
-
-        Point2D pointInScene = new Point2D(e.getSceneX(), e.getSceneY());
-        double xAxisLoc = xNumberAxis.sceneToLocal(pointInScene).getX();
-        double yAxisLoc = yNumberAxis.sceneToLocal(pointInScene).getY();
-        Double x = (Double) xNumberAxis.getValueForDisplay(xAxisLoc);
-        Double y = (Double) yNumberAxis.getValueForDisplay(yAxisLoc);
-
-        mainController.getCurrentDot().setX(x);
-        mainController.getCurrentDot().setY(y);
-
-        updateCurrentDotLabel();
-        mainController.getTableController().updateTable();
-//        controller.getTableController().debugDots();
-        data.setXValue(x);
-        data.setYValue(y);
-
-      });
-
+      updateChartOnDraggedListener(node, data);
 
     }
   }
@@ -207,7 +218,7 @@ public class GraphController {
       return;
     }
 
-    this.currentDotLabel.setText("(" + String.format("%,.2f", dot.getX()) + ", " + String.format("%,.2f", dot.getY()) + ")");
+    this.currentDotLabel.setText("(" + String.format("%,.2f", dot.getPosX()) + ", " + String.format("%,.2f", dot.getPosY()) + ")");
 
   }
 
@@ -259,10 +270,14 @@ public class GraphController {
       textToInsert += rightBound + "]";
 
     gapLabel.setText(textToInsert);
+
+
   }
 
   @FXML
   public void setBounds(){
+
+    updateSetGapButtonText();
 
     double leftValue;
     double rightValue;
@@ -290,6 +305,13 @@ public class GraphController {
     rightBoundTextField.clear();
 
     updateGraph();
+  }
+
+  private void updateSetGapButtonText(){
+    if (leftBoundTextField.getText().equals("")
+            && rightBoundTextField.getText().equals(""))
+      setGapButton.setText("Set gap");
+    else setGapButton.setText("Reset gap");
   }
 
   @FXML

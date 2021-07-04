@@ -10,9 +10,9 @@
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="420.0" prefWidth="495.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.oreluniver.practice.graphapp.view.GraphController">
+<VBox alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="638.0" prefWidth="495.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.oreluniver.practice.graphapp.view.GraphController">
    <children>
-      <LineChart fx:id="lineChart" alternativeRowFillVisible="false" legendVisible="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" onMouseClicked="#resetCurrentDot" onScroll="#updateAxisGrid" prefHeight="347.0" prefWidth="495.0" title="Graph" VBox.vgrow="ALWAYS">
+      <LineChart fx:id="lineChart" alternativeRowFillVisible="false" legendVisible="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" onMouseClicked="#resetCurrentDot" onScroll="#updateAxisGrid" prefHeight="560.0" prefWidth="500.0" VBox.vgrow="ALWAYS">
          <xAxis>
             <NumberAxis autoRanging="false" lowerBound="-5.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minorTickVisible="false" side="BOTTOM" tickLength="4.0" tickUnit="1.0" upperBound="5.0" fx:id="xNumberAxis" />
          </xAxis>

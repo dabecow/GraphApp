@@ -55,8 +55,8 @@ public class TableController {
   @FXML
   private void initialize(){
 
-    columnX.setCellValueFactory(new PropertyValueFactory<>("x"));
-    columnY.setCellValueFactory(new PropertyValueFactory<>("y"));
+    columnX.setCellValueFactory(new PropertyValueFactory<>("posX"));
+    columnY.setCellValueFactory(new PropertyValueFactory<>("posY"));
 
 
     setCellFactory(columnX);
@@ -65,13 +65,13 @@ public class TableController {
 
     columnX.setOnEditCommit(event -> {
       Dot oldDot = event.getRowValue();
-      Dot newDot = new Dot(event.getNewValue(), oldDot.getY());
+      Dot newDot = new Dot(event.getNewValue(), oldDot.getPosY());
       updateDot(mainController.getCurrentDot(), newDot, dots);
     });
 
     columnY.setOnEditCommit(event -> {
       Dot oldDot = event.getRowValue();
-      Dot newDot = new Dot(oldDot.getX(), event.getNewValue());
+      Dot newDot = new Dot(oldDot.getPosX(), event.getNewValue());
       updateDot(mainController.getCurrentDot(), newDot, dots);
     });
 
@@ -114,7 +114,7 @@ public class TableController {
   @FXML
   public void updateTable(){
 
-    dots.sort(Comparator.comparing(Dot::getX));
+    dots.sort(Comparator.comparing(Dot::getPosX));
 
     tableView.getItems().removeAll();
     tableView.setItems(FXCollections.observableArrayList(dots));
@@ -142,7 +142,7 @@ public class TableController {
     yDotTextField.clear();
 
     dots.add(new Dot(xValue, yValue));
-    dots.sort(Comparator.comparing(Dot::getX));
+    dots.sort(Comparator.comparing(Dot::getPosX));
 
     updateTable();
     mainController.getGraphController().updateGraph();
@@ -154,7 +154,7 @@ public class TableController {
 
     for (Dot dot: dots
     ) {
-      System.out.println(dot.getX() + ":" + dot.getY());
+      System.out.println(dot.getPosX() + ":" + dot.getPosY());
     }
   }
 

@@ -2,27 +2,27 @@ package edu.oreluniver.practice.graphapp.model;
 
 public class Dot {
 
-  private double x;
-  private double y;
+  private double posX;
+  private double posY;
 
-  public Dot(double x, double y) {
-    this.x = x;
-    this.y = y;
+  public Dot(double posX, double posY) {
+    this.posX = posX;
+    this.posY = posY;
   }
 
-  public double getX() {
-    return x;
+  public double getPosX() {
+    return posX;
   }
 
-  public void setX(double x) {
-    this.x = x;
+  public void setPosX(double posX) {
+    this.posX = posX;
   }
 
-  public double getY() {
-    return y;
+  public double getPosY() {
+    return posY;
   }
 
-  public void setY(double y) {
-    this.y = y;
+  public void setPosY(double posY) {
+    this.posY = posY;
   }
 }
