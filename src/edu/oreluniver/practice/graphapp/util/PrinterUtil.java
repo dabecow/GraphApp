@@ -17,6 +17,7 @@ import java.awt.print.PrinterException;
 public class PrinterUtil {
 
     public static boolean printNode(final PrinterJob printerJob, final Node view) {
+
         final WritableImage snapshot = view.snapshot(null, null);
         final ImageView ivSnapshot = new ImageView(snapshot);
         final PageLayout pageLayout = printerJob.getJobSettings().getPageLayout();

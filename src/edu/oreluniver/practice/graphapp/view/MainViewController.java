@@ -138,6 +138,8 @@ public class MainViewController implements Initializable {
       return;
 
     currentFile = fileChooser.showSaveDialog(null);
+
+    mainStage.setTitle(currentFile.getName());
     try {
       if (!currentFile.createNewFile())
         throw new CreatingTheFileException();
@@ -172,7 +174,6 @@ public class MainViewController implements Initializable {
       currentFile = null;
     }
 
-//    todo: set title
   }
 
   @FXML
@@ -223,6 +224,9 @@ public class MainViewController implements Initializable {
   @FXML
   private void printGraph(){
     PrinterJob printerJob = PrinterJob.createPrinterJob();
+    if (!(printerJob.showPageSetupDialog(null) && printerJob.showPrintDialog(null)))
+      return;
+
     PrinterUtil.printNode(printerJob, graphViewController.getLineChart());
     printerJob.endJob();
   }
