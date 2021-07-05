@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/javafxtest.iml" filepath="$PROJECT_DIR$/javafxtest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/GraphApp.iml" filepath="$PROJECT_DIR$/GraphApp.iml" />
     </modules>
   </component>
 </project>

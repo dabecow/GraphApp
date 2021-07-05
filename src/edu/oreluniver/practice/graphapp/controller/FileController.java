@@ -1,23 +1,25 @@
 package edu.oreluniver.practice.graphapp.controller;
 
 
-import edu.oreluniver.practice.graphapp.dao.GraphDao;
+import edu.oreluniver.practice.graphapp.dao.DotsDao;
 import edu.oreluniver.practice.graphapp.exceptions.ExtensionNotSupportedException;
 import edu.oreluniver.practice.graphapp.exceptions.FileIsCorruptedException;
+import edu.oreluniver.practice.graphapp.model.Dot;
 import edu.oreluniver.practice.graphapp.util.ExcelUtil;
 import edu.oreluniver.practice.graphapp.util.FileUtil;
 
 import java.io.*;
+import java.util.List;
 
 public class FileController {
 
-    private GraphDao graphDao;
+    private DotsDao dotsDao;
 
     private static volatile FileController instance;
 
 
     public FileController() {
-        graphDao = GraphDao.getInstance();
+        dotsDao = DotsDao.getInstance();
     }
 
     public static FileController getInstance() {
@@ -39,7 +41,7 @@ public class FileController {
             case "xls":
             case "xlsx":
 
-                ExcelUtil.write(file, GraphDao.getInstance().getGraph(), extension);
+                ExcelUtil.write(file, DotsDao.getInstance().getDotList(), extension);
 
                 break;
             case "bikov":
@@ -47,7 +49,7 @@ public class FileController {
                 FileOutputStream fos = new FileOutputStream(file);
                 ObjectOutputStream oos = new ObjectOutputStream(fos);
 
-                oos.writeObject(graphDao);
+                oos.writeObject(dotsDao.getDotList());
                 fos.close();
 
                 break;
@@ -64,7 +66,7 @@ public class FileController {
             case "xls":
             case "xlsx":
 
-                GraphDao.getInstance().setGraph(
+                DotsDao.getInstance().setDotList(
                         ExcelUtil.read(file, extension));
 
                 break;
@@ -73,8 +75,9 @@ public class FileController {
                     FileInputStream fis = new FileInputStream(file);
                     ObjectInputStream ois = new ObjectInputStream(fis);
 
-                    graphDao.setGraph(((GraphDao) ois.readObject()).getGraph());
+                    dotsDao.setDotList((List<Dot>) ois.readObject());
                     fis.close();
+
                 } catch (Exception e){
                     throw new FileIsCorruptedException();
                 }

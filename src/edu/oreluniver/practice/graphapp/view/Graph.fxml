@@ -14,7 +14,7 @@
    <children>
       <LineChart fx:id="lineChart" alternativeRowFillVisible="false" legendVisible="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" onMouseClicked="#resetCurrentDot" onScroll="#updateAxisGrid" prefHeight="560.0" prefWidth="500.0" VBox.vgrow="ALWAYS">
          <xAxis>
-            <NumberAxis autoRanging="false" lowerBound="-5.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minorTickVisible="false" side="BOTTOM" tickLength="4.0" tickUnit="1.0" upperBound="5.0" fx:id="xNumberAxis" />
+            <NumberAxis autoRanging="false" lowerBound="-5.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minorTickCount="0" minorTickLength="0.0" minorTickVisible="false" side="BOTTOM" tickLength="4.0" tickUnit="1.0" upperBound="5.0" fx:id="xNumberAxis" />
          </xAxis>
          <yAxis>
             <NumberAxis fx:id="yNumberAxis" autoRanging="false" lowerBound="-5.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minorTickVisible="false" side="LEFT" tickLength="4.0" tickUnit="1.0" upperBound="5.0" />

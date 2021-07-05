@@ -1,6 +1,8 @@
 package edu.oreluniver.practice.graphapp.model;
 
-public class Dot {
+import java.io.Serializable;
+
+public class Dot implements Serializable {
 
   private double posX;
   private double posY;
